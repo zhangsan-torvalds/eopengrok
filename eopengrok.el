@@ -130,6 +130,8 @@
 
 (defun eopengrok--search-option (conf text option symbol)
   "Opengrok search option list with CONF TEXT OPTION SYMBOL."
+  (if (eq symbol 'file)
+      (setq text (concat "\"" text "\"")))
   (if (eq symbol 'custom)
       (-flatten (list "search" "-R" conf (split-string text " " t)))
     (list "search" "-R" conf option text)))
