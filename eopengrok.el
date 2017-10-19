@@ -79,13 +79,13 @@
   :type 'string)
 
 (defcustom eopengrok-ignore-file-or-directory
-  "d:.opengrok,d:out,*.so,*.a,*.o,*.gz,*.bz2,*.jar,*.zip,*.class,*.elc"
+  "d:.opengrok,d:out,*.so,*.a,*.o,*.gz,*.bz2,*.jar,*.zip,*.class,*.elc,*.js,*.png,*/test/*,*/tests/*,*/res/*,*/docs/*,*/frameworks/rs/*,*/res/values-*,*/frameworks/support/*,*/miui/theme/*,*/miui/I18N_res/*,*/miui/manifest/*,*/miui/config-overlay/*,*/miui/cust/*"
   "Ignore files or directories."
   :group 'eopngrok
   :type 'string)
 
 (defcustom eopengrok-pattern-file-or-directory
-  "=art/*,=bionic/*,=build/*,=device/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=packages/*,=prebuilts/*,=system/*,=vendor/*"
+  "=art/*,=bionic/*,=build/*,=device/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=packages/*,=system/*,=vendor/*"
   "Ignore files or directories."
   :group 'eopngrok
   :type 'string)
