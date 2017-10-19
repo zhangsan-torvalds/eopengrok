@@ -122,7 +122,7 @@
 
 (defun eopengrok--get-configuration ()
   "Search for Project configuration.xml."
-  (let* ((start-dir (expand-file-name default-directory))
+  (let* ((start-dir (expand-file-name session-root-directory))
          (index-dir (locate-dominating-file start-dir eopengrok-configuration)))
     (if index-dir
         (concat (expand-file-name index-dir) eopengrok-configuration)
@@ -177,6 +177,7 @@
       (if (numberp info)
           (-when-let (window (eopengrok--show-source))
             (select-window window)
+            (maximize-window window)
             (ring-insert find-tag-marker-ring (point-marker)))
         (eopengrok--show-commit nil)))))
 
@@ -269,8 +270,13 @@
      (list :page eopengrok-page)
      (progn
        (unless (string= file eopengrok-last-filename)
-         (insert (format "\n%s\n" file))
-         (eopengrok--abbreviate-file file))
+         (setq filename file)
+         (if (string-prefix-p session-root-directory filename)
+             (setq filename (replace-regexp-in-string session-root-directory "" filename))
+           )
+         (insert (format "\n%s\n" filename))
+         (eopengrok--abbreviate-file filename)
+         )
        (eopengrok--properties-region
         (list :name (expand-file-name file)
               :info (if history info (string-to-number info)))
@@ -349,11 +355,18 @@
         (doc (format "Find option %s" option))
         (str (format "Find %s: " sym)))
     `(defun ,fun (text) ,doc
-            (interactive (list (read-string ,str (thing-at-point 'symbol))))
             (let ((proc (get-process "eopengrok")))
               (when proc
                 (kill-process proc)
                 (sleep-for 0.1)))
+            (interactive
+             (let ((symbols (thing-at-point 'symbol)))
+               (list (ido-completing-read (format (concat "search " "(default " symbols "): "))
+                                          find-tag-history nil nil nil
+                                          'find-tag-history symbols))
+               )
+             )
+
             (let* ((conf (eopengrok--get-configuration))
                    (proc (apply 'start-process
                                 "eopengrok"
@@ -370,7 +383,10 @@
                 (eopengrok--init)
                 (eopengrok--current-info
                  proc (s-chop-suffix eopengrok-configuration conf)
-                 t (concat ,str text)))))))
+                 t (concat ,str text)))
+;;                (switch-to-buffer-other-window "*eopengrok*")
+              (delete-other-windows)
+              ))))
 
 (eopengrok-define-find definition "-d")
 (eopengrok-define-find file "-p")
