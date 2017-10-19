@@ -79,7 +79,13 @@
   :type 'string)
 
 (defcustom eopengrok-ignore-file-or-directory
-  ".opengrok:out:*.so:*.a:*.o:*.gz:*.bz2:*.jar:*.zip:*.class:*.elc"
+  "d:.opengrok,d:out,*.so,*.a,*.o,*.gz,*.bz2,*.jar,*.zip,*.class,*.elc"
+  "Ignore files or directories."
+  :group 'eopngrok
+  :type 'string)
+
+(defcustom eopengrok-pattern-file-or-directory
+  "=art/*,=bionic/*,=build/*,=device/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=packages/*,=prebuilts/*,=system/*,=vendor/*"
   "Ignore files or directories."
   :group 'eopngrok
   :type 'string)
@@ -407,6 +413,7 @@ If not nil every directory in DIR is considered a separate project."
                      "clj-opengrok"
                      (append (list "index" "-s" (expand-file-name dir))
                              (list "-i" eopengrok-ignore-file-or-directory)
+                             (list "-I" (replace-regexp-in-string "=" session-root-directory eopengrok-pattern-file-or-directory))
                              (when enable-projects-p '("-e"))))))
     (set-process-filter proc 'eopengrok--process-filter)
     (set-process-sentinel proc 'eopengrok--process-sentinel)
