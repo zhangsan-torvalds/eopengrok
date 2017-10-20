@@ -373,9 +373,12 @@
                (if (string= this-command "eopengrok-find-file")
                    (setq search-history find-file-history)
                  )
-               (list (ido-completing-read (format (concat "search " "(default " symbols "): "))
-                                          search-history nil nil nil
-                                          'search-history symbols))
+               (list (ido-completing-read
+                      (concat "Find "
+                              (replace-regexp-in-string "eopengrok-find-" "" (format "%s " this-command))
+                              "(default " symbols "): ")
+                      search-history nil nil nil
+                      'search-history symbols))
                )
              )
 
