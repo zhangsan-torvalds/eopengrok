@@ -79,14 +79,15 @@
   :type 'string)
 
 (defcustom eopengrok-ignore-file-or-directory
-  "d:.opengrok,d:out,*.so,*.a,*.o,*.gz,*.bz2,*.jar,*.zip,*.class,*.elc,*.js,*.png,*/test/*,*/tests/*,*/res/*,*/docs/*,*/frameworks/rs/*,*/res/values-*,*/frameworks/support/*,*/miui/theme/*,*/miui/I18N_res/*,*/miui/manifest/*,*/miui/config-overlay/*,*/miui/cust/*,*/vendor/qcom/*"
+  "d:cts,d:docs,d:test,d:tests,d:.opengrok,d:out,*.res,*.so,*.a,*.o,*.gz,*.bz2,*.jar,*.zip,*.class,*.elc,*.js,*.png,*.xml,*.mp3,*.mp4,*.html,*/res/res/*,*/res/anim*/*,*/res/layout*/*,*/res/drawable*/*,*/res/color*/*,*/rest/raw*/*,*/res/xml*/*,*/res/mipmap*/*,*/res/values*/*,*/frameworks/rs/*,*/frameworks/support/*,*/miui/theme/*,*/miui/I18N_res/*,*/miui/manifest/*,*/miui/config-overlay/*,*/miui/cust/*,*/vendor/qcom/*"
+  ;;"d:cts,d:docs,d:test,d:tests,d:.opengrok,d:out"
   "Ignore files or directories."
   :group 'eopngrok
   :type 'string)
 
 (defcustom eopengrok-pattern-file-or-directory
-  "=art/*,=bionic/*,=build/*,=device/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=system/*,=vendor/*"
-  "Ignore files or directories."
+  "=art/*,=bionic/*,=build/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=system/*,=vendor/*"
+  "Pattern files or directories."
   :group 'eopngrok
   :type 'string)
 
@@ -420,7 +421,8 @@ If not nil every directory in DIR is considered a separate project."
                      "clj-opengrok"
                      (append (list "index" "-s" (expand-file-name dir))
                              (list "-i" eopengrok-ignore-file-or-directory)
-                             (list "-I" (replace-regexp-in-string "=" session-root-directory eopengrok-pattern-file-or-directory))
+                             ;; do not support "-I" option on Windows now
+                             (list "-I" (replace-regexp-in-string "=" session-root-directory eopegnrok-pattern-file-or-directory))
                              (when enable-projects-p '("-e"))))))
     (set-process-filter proc 'eopengrok--process-filter)
     (set-process-sentinel proc 'eopengrok--process-sentinel)
