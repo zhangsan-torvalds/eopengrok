@@ -139,6 +139,8 @@
   "Opengrok search option list with CONF TEXT OPTION SYMBOL."
   (if (eq symbol 'file)
       (setq text (concat "\"" text "\"")))
+  (if (eq symbol 'text)
+      (setq text (concat "\"" text "\"")))
   (if (eq symbol 'custom)
       (-flatten (list "search" "-R" conf (split-string text " " t)))
     (list "search" "-R" conf option text)))
@@ -187,6 +189,7 @@
           (-when-let (window (eopengrok--show-source))
             (select-window window)
             (maximize-window window)
+            (delete-other-windows)
             (ring-insert find-tag-marker-ring (point-marker)))
         (eopengrok--show-commit nil)))))
 
