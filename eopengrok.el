@@ -381,8 +381,8 @@
                       (concat "Find "
                               (replace-regexp-in-string "eopengrok-find-" "" (format "%s " this-command))
                               "(default " symbols "): ")
-                      search-history nil nil nil
-                      'search-history symbols))
+                      find-tag-history nil nil nil
+                      'find-tag-history symbols))
                )
              )
 
@@ -403,16 +403,65 @@
                 (eopengrok--current-info
                  proc (s-chop-suffix eopengrok-configuration conf)
                  t (concat ,str text)))
-;;                (switch-to-buffer-other-window "*eopengrok*")
+              ;;                (switch-to-buffer-other-window "*eopengrok*")
               (delete-other-windows)
               ))))
 
 (eopengrok-define-find definition "-d")
 (eopengrok-define-find file "-p")
 (eopengrok-define-find reference "-r")
-(eopengrok-define-find text "-f")
 (eopengrok-define-find history "-h")
 (eopengrok-define-find custom "")
+
+(defmacro eopengrok-define-find2 (sym option)
+  "Make function with SYM and OPTION."
+  (let ((fun (intern (format "eopengrok-find-%s" sym)))
+        (doc (format "Find option %s" option))
+        (str (format "Find %s: " sym)))
+    `(defun ,fun (text) ,doc
+            (let ((proc (get-process "eopengrok")))
+              (when proc
+                (kill-process proc)
+                (sleep-for 0.1)))
+            (interactive
+             (let ((symbols (thing-at-point 'symbol)))
+               (setq search-history find-tag-history)
+               (if (string= this-command "eopengrok-find-file")
+                   (setq search-history find-file-history)
+                 )
+               (list (ido-completing-read
+                      (concat "Find "
+                              (replace-regexp-in-string "eopengrok-find-" "" (format "%s " this-command))
+                              "(default " symbols "): ")
+                      find-tag-history nil nil nil
+                      'find-tag-history symbols))
+               )
+             )
+            (let*
+                ((conf (eopengrok--get-configuration))
+                 (csearch_env (setenv "CSEARCHINDEX" (concat (get-session-root) ".csearchindex")))
+                 (proc (apply 'start-process
+                              "eopengrok"
+                              eopengrok-buffer
+                              "csearch"
+                              (list "-n" text))
+                       )
+                 )
+              (set-process-query-on-exit-flag proc nil)
+              (set-process-filter proc 'eopengrok--process-filter)
+              (set-process-sentinel proc 'eopengrok--process-sentinel)
+              (process-put proc :text text)
+              (with-current-buffer eopengrok-buffer
+                (eopengrok-mode t)
+                (eopengrok--init)
+                (eopengrok--current-info
+                 proc (s-chop-suffix eopengrok-configuration conf)
+                 t (concat ,str text)))
+              ;;                (switch-to-buffer-other-window "*eopengrok*")
+              (delete-other-windows)
+              ))))
+
+(eopengrok-define-find2 text "-f")
 
 (defun eopengrok-create-index (dir &optional enable-projects-p)
   "Create an Index file in DIR, ENABLE-PROJECTS-P is flag for enable projects.
