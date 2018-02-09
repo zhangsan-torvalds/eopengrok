@@ -390,7 +390,7 @@
                    (proc (apply 'start-process
                                 "eopengrok"
                                 eopengrok-buffer
-                                "clj-opengrok"
+                                "~/.emacs.d/emacs/packages/clj-opengrok/clj-opengrok"
                                 (eopengrok--search-option conf text
                                                           ,option ',sym))))
               (set-process-query-on-exit-flag proc nil)
@@ -461,7 +461,8 @@
               (delete-other-windows)
               ))))
 
-(eopengrok-define-find2 text "-f")
+;;(eopengrok-define-find2 text "-f")
+(eopengrok-define-find text "-f")
 
 (defun eopengrok-create-index (dir &optional enable-projects-p)
   "Create an Index file in DIR, ENABLE-PROJECTS-P is flag for enable projects.
@@ -470,7 +471,7 @@ If not nil every directory in DIR is considered a separate project."
   (let ((proc (apply 'start-process
                      "eopengrok-indexer"
                      eopengrok-indexing-buffer
-                     "clj-opengrok"
+                     "~/.emacs.d/emacs/packages/clj-opengrok/clj-opengrok"
                      (append (list "index" "-s" (expand-file-name dir))
                              (list "-i" eopengrok-ignore-file-or-directory)
                              ;; do not support "-I" option on Windows now
