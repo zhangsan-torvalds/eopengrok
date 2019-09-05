@@ -86,7 +86,7 @@
   :type 'string)
 
 (defcustom eopengrok-pattern-file-or-directory
-  "=art/*,=bionic/*,=build/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=system/*,=vendor/*"
+  "=art/*,=bionic/*,=bootable/*,=build/*,=frameworks/*,=hardware/*,=kernel/*,=libcore/*,=libnativehelper/*,=miui/*,=system/*"
   "Pattern files or directories."
   :group 'eopngrok
   :type 'string)
@@ -462,7 +462,7 @@
               ))))
 
 ;;(eopengrok-define-find2 text "-f")
-(eopengrok-define-find text "-f")
+(eopengrok-define-find2 text "-f")
 
 (defun eopengrok-create-index (dir &optional enable-projects-p)
   "Create an Index file in DIR, ENABLE-PROJECTS-P is flag for enable projects.
